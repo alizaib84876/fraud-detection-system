@@ -1,0 +1,24 @@
+groups:
+  - name: fraud-monitoring
+    rules:
+      - alert: FraudRecallDrop
+        expr: fraud_model_recall < 0.8
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Fraud recall dropped below threshold"
+      - alert: DataDriftHigh
+        expr: fraud_data_drift_psi > 0.2
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Data drift exceeded threshold"
+      - alert: ApiLatencySpike
+        expr: fraud_api_latency_ms > 500
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "API latency spike detected"

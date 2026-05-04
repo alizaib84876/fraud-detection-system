@@ -1,0 +1,5 @@
+Metadata-Version: 2.4
+Name: fraud-mlflow-mlops
+Version: 0.1.0
+Summary: IEEE fraud detection MLOps assignment using MLflow
+Requires-Python: >=3.10
