@@ -1,0 +1,34 @@
+services:
+  fraud-api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.api
+    environment:
+      MODEL_URI: artifacts/model
+      FRAUD_RECALL: "0.78"
+      FRAUD_FPR: "0.08"
+      FRAUD_PRECISION: "0.24"
+      FRAUD_DRIFT_PSI: "0.18"
+      FRAUD_MISSING_RATE: "0.15"
+    ports:
+      - "8000:8000"
+
+  prometheus:
+    image: prom/prometheus:v2.52.0
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./alerts.yml:/etc/prometheus/alerts.yml:ro
+    ports:
+      - "9090:9090"
+    depends_on:
+      - fraud-api
+
+  grafana:
+    image: grafana/grafana:10.4.3
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on:
+      - prometheus

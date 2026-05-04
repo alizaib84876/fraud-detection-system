@@ -1,6 +1,56 @@
 {
   "title": "Fraud Model Performance",
+  "uid": "fraud-model-performance",
   "schemaVersion": 38,
-  "version": 1,
-  "panels": []
+  "version": 2,
+  "refresh": "10s",
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "id": 10,
+      "type": "timeseries",
+      "title": "Fraud Recall",
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [
+        {"expr": "fraud_model_recall", "legendFormat": "recall"}
+      ],
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 0}
+    },
+    {
+      "id": 11,
+      "type": "timeseries",
+      "title": "Precision",
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [
+        {"expr": "fraud_precision", "legendFormat": "precision"}
+      ],
+      "gridPos": {"h": 8, "w": 8, "x": 8, "y": 0}
+    },
+    {
+      "id": 12,
+      "type": "timeseries",
+      "title": "False Positive Rate",
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [
+        {"expr": "fraud_false_positive_rate", "legendFormat": "fpr"}
+      ],
+      "gridPos": {"h": 8, "w": 8, "x": 16, "y": 0}
+    },
+    {
+      "id": 13,
+      "type": "timeseries",
+      "title": "Prediction Confidence p90",
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.9, sum(rate(fraud_prediction_confidence_bucket[5m])) by (le))",
+          "legendFormat": "p90"
+        }
+      ],
+      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 8}
+    }
+  ]
 }

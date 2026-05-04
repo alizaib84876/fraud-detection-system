@@ -1,6 +1,33 @@
 {
   "title": "Fraud Data Drift",
+  "uid": "fraud-data-drift",
   "schemaVersion": 38,
-  "version": 1,
-  "panels": []
+  "version": 2,
+  "refresh": "10s",
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "id": 20,
+      "type": "timeseries",
+      "title": "Drift PSI",
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [
+        {"expr": "fraud_data_drift_psi", "legendFormat": "psi"}
+      ],
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0}
+    },
+    {
+      "id": 21,
+      "type": "timeseries",
+      "title": "Missing Rate",
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [
+        {"expr": "fraud_missing_rate", "legendFormat": "missing"}
+      ],
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0}
+    }
+  ]
 }
