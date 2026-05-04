@@ -9,6 +9,7 @@ REPORTS_DIR = PROJECT_ROOT / "reports"
 MODEL_REGISTRY_DIR = ARTIFACTS_DIR / "model_registry"
 
 MLFLOW_EXPERIMENT_NAME = "ieee-fraud-mlflow"
+MLFLOW_TRACKING_URI = f"file:{(PROJECT_ROOT / 'mlruns').as_posix()}"
 TARGET_COLUMN = "isFraud"
 TIME_COLUMN = "TransactionDT"
 ID_COLUMN = "TransactionID"

@@ -12,6 +12,7 @@ from imblearn.under_sampling import RandomUnderSampler
 from fraud_mlops.config import (
     AUC_THRESHOLD,
     ARTIFACTS_DIR,
+    MLFLOW_TRACKING_URI,
     MLFLOW_EXPERIMENT_NAME,
     RANDOM_STATE,
     RECALL_THRESHOLD,
@@ -83,6 +84,17 @@ def _build_model(model_name: str, y_train: pd.Series, cost_sensitive: bool):
 
 
 def run_pipeline(data_path: str | Path) -> pd.DataFrame:
+    mlruns_path = Path(MLFLOW_TRACKING_URI.replace("file:", ""))
+    mlruns_path.mkdir(parents=True, exist_ok=True)
+    mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
+
+    client = mlflow.tracking.MlflowClient()
+    experiment = client.get_experiment_by_name(MLFLOW_EXPERIMENT_NAME)
+    if experiment is None:
+        client.create_experiment(
+            MLFLOW_EXPERIMENT_NAME,
+            artifact_location=MLFLOW_TRACKING_URI,
+        )
     mlflow.set_experiment(MLFLOW_EXPERIMENT_NAME)
 
     df = load_dataset(data_path)
