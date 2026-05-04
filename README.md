@@ -1,64 +1,103 @@
-# IEEE Fraud Detection MLOps Project
+# Fraud Detection System (IEEE CIS)
 
-This repository is being adapted from the original Kubeflow wording to **MLflow** as requested by your instructor.
+End-to-end fraud detection pipeline using the IEEE CIS Fraud Detection dataset. The project focuses on high recall, scalable training, automated monitoring, and retraining triggers with MLflow for experiment tracking.
 
-The goal is to build a fraud detection workflow for the IEEE CIS Fraud Detection dataset with:
+## Highlights
 
-- high recall for fraud cases
-- scalable training and inference
-- automated performance-degradation detection and retraining triggers
+- MLflow experiment tracking with nested runs
+- Data validation, preprocessing, and feature engineering
+- High-cardinality categorical handling via target encoding
+- Imbalance handling: standard, SMOTE, and undersampling
+- Models: XGBoost, LightGBM, and hybrid RF + feature selection
+- Metrics: precision, recall, F1, AUC-ROC, confusion matrix
+- Cost-sensitive training comparison
+- Drift simulation and retraining decision logic
+- CI/CD with Docker images for training and inference
+- Monitoring hooks for alerts and retraining triggers
 
-## What is already scaffolded
+## Dataset
 
-- MLflow-based experiment pipeline
-- data validation and preprocessing helpers
-- target encoding for high-cardinality categorical fields
-- support for XGBoost, LightGBM, and a hybrid RF + feature-selection model
-- imbalance handling hooks for class weighting and SMOTE
-- evaluation helpers for precision, recall, F1, AUC-ROC, and confusion matrix
-- assignment-ready screenshot checklist
+Download the IEEE CIS Fraud Detection data from Kaggle and place the files in:
 
-## Screenshot checklist for proof
+```
+data/ieee-fraud-detection/
+```
 
-Use these screenshots as evidence in your submission.
+Required file for training:
 
-| Step | What to capture | Suggested file or UI |
-| --- | --- | --- |
-| 1 | Environment verification | Terminal showing `python3 --version`, `docker --version`, `minikube version`, `kubectl version`, `mlflow --version` |
-| 2 | Project scaffold | Workspace explorer showing this repository structure |
-| 3 | Dependency installation | Terminal output from `pip install -r requirements.txt` |
-| 4 | Data download | Kaggle dataset folder or CSV files in `data/raw/` |
-| 5 | Data validation | Terminal output from the validation script and missing-value summary |
-| 6 | MLflow tracking server | MLflow UI home page and experiment list |
-| 7 | Pipeline run | Terminal output from the main pipeline command |
-| 8 | Model comparison | MLflow run page showing XGBoost, LightGBM, and hybrid results |
-| 9 | Imbalance strategy comparison | Metrics table or logs showing class weighting vs SMOTE |
-| 10 | Cost-sensitive training | Metrics comparison between standard and cost-sensitive runs |
-| 11 | Explainability | SHAP summary plot or feature-importance figure |
-| 12 | Deployment decision | Logged conditional deployment artifact or approval flag |
-| 13 | CI/CD run | GitHub Actions workflow run page |
-| 14 | Monitoring dashboards | Grafana system/model/data drift dashboards |
-| 15 | Alerting | Prometheus/Grafana alert firing and retraining trigger evidence |
+- `train_transaction.csv`
 
-## Suggested order for the assignment write-up
+The dataset files are excluded from Git by `.gitignore`.
 
-1. Environment setup
-2. Dataset acquisition and schema check
-3. MLflow experiment tracking setup
-4. Data preprocessing and imbalance handling
-5. Model training and evaluation
-6. Cost-sensitive learning comparison
-7. Drift simulation and retraining strategy
-8. CI/CD and monitoring integration
-9. Explainability and business impact analysis
+## Quickstart
 
-## Local workflow
-
-The current code is structured so you can run the pipeline from a single entry point once the dependencies and data are in place.
+Install dependencies:
 
 ```bash
 python3 -m pip install -r requirements.txt
-python3 scripts/run_pipeline.py --data data/raw/ieee_fraud_train_transaction.csv
+python3 -m pip install -e .
 ```
 
-If you use the MLflow UI locally, capture a screenshot of the experiment page after the pipeline completes.
+Validate data:
+
+```bash
+python3 scripts/validate_data.py --data data/ieee-fraud-detection/train_transaction.csv
+```
+
+Run the MLflow pipeline:
+
+```bash
+python3 scripts/run_pipeline.py --data data/ieee-fraud-detection/train_transaction.csv
+```
+
+Start the MLflow UI:
+
+```bash
+mlflow ui
+```
+
+## Explainability
+
+Generate a feature-importance plot:
+
+```bash
+python3 scripts/explain_model.py --data data/ieee-fraud-detection/train_transaction.csv
+```
+
+Output:
+
+- `reports/feature_importance.png`
+
+## Drift Simulation
+
+```bash
+python3 scripts/simulate_drift.py --data data/ieee-fraud-detection/train_transaction.csv
+```
+
+## CI/CD (GitHub Actions)
+
+Workflow file:
+
+- `.github/workflows/ci-cd.yml`
+
+Builds and pushes Docker images to GHCR:
+
+- `ghcr.io/<owner>/<repo>/ieee-fraud-train:latest`
+- `ghcr.io/<owner>/<repo>/ieee-fraud-api:latest`
+
+## Monitoring Trigger
+
+Simulate monitoring-driven CI trigger (dry run):
+
+```bash
+python3 scripts/monitor_and_trigger.py --data data/ieee-fraud-detection/train_transaction.csv --dry-run
+```
+
+## Project Structure
+
+```
+src/fraud_mlops/        Core pipeline modules
+scripts/               Entry points for training, validation, drift, and monitoring
+docker/                Training + API Dockerfiles
+monitoring/            Prometheus + Grafana assets
+```
