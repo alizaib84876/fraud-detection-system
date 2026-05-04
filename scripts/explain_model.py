@@ -19,15 +19,12 @@ def main() -> None:
     numeric_columns, categorical_columns = identify_feature_columns(train_df, TARGET_COLUMN, TIME_COLUMN)
 
     train_features = impute_numeric(train_df.drop(columns=[TARGET_COLUMN]), numeric_columns)
-    test_features = impute_numeric(test_df.drop(columns=[TARGET_COLUMN]), numeric_columns)
 
     encoder = TargetEncoder()
     if categorical_columns:
         train_encoded = encoder.fit_transform(train_features.join(train_df[[TARGET_COLUMN]]), categorical_columns, TARGET_COLUMN).drop(columns=[TARGET_COLUMN])
-        test_encoded = encoder.transform(test_features.fillna("__missing__"), categorical_columns)
     else:
         train_encoded = train_features
-        test_encoded = test_features
 
     model = build_xgboost_model(random_state=42, scale_pos_weight=None)
     model.fit(train_encoded, train_df[TARGET_COLUMN].astype(int))
